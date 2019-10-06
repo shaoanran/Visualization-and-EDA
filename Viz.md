@@ -48,6 +48,8 @@ recode: rename the station code.
 
 ## create a gglot
 
+basic scatter plots
+
 ``` r
 ggplot(weather_df,aes(x = tmin, y =tmax)) + geom_point()
 ```
@@ -59,6 +61,8 @@ ggplot(weather_df,aes(x = tmin, y =tmax)) + geom_point()
 ## alternate way of making this plot
 
 start with a data, then do others, such as ggplot, filter…..
+
+Advanced Scatter plots
 
 ``` r
 weather_df %>% 
@@ -199,6 +203,8 @@ weather_df %>%
 
 ## more kinds of plots\!\!
 
+univariate plots
+
 ``` r
 weather_df %>% 
   ggplot(aes(x = tmax, fill = name)) + 
@@ -257,3 +263,39 @@ weather_df %>%
     ## Warning: Removed 3 rows containing non-finite values (stat_density_ridges).
 
 ![](Viz_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+## saving a plot
+
+``` r
+ggp_ridge_temp = 
+  weather_df %>% 
+  ggplot(aes(x = tmax, y = name)) + 
+  geom_density_ridges()
+
+ggsave("ggplot_temp_ridge.pdf", ggp_ridge_temp)
+```
+
+    ## Saving 7 x 5 in image
+
+    ## Picking joint bandwidth of 1.84
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density_ridges).
+
+there is difference between how r is creating a plot and how that get
+embeded inside here Setting the width of figure and fit them into the
+reports\!\!\!\!\!\!
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(aes(color = name), alpha = 0.4 ) + 
+  geom_smooth(se = FALSE) 
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_smooth).
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Viz_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->

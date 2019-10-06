@@ -170,6 +170,7 @@ temperature over the day of year in three locations, with precipitation.
 weather_df %>% 
   ggplot(aes(x = date, y = tmax, color = name)) +
   geom_point(aes(size = prcp), alpha = 0.4) +
+  ## we can ignore this step if we wanna have only geom_smooth
   geom_smooth(se = FALSE, size = 2)
 ```
 
@@ -180,3 +181,79 @@ weather_df %>%
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
 ![](Viz_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+2d density
+
+``` r
+# install. packages("hexbin") for geom_hex 
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_bin2d() +
+  ## same things, but little squares. 
+  facet_grid(~name)
+```
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_bin2d).
+
+![](Viz_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+## more kinds of plots\!\!
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, fill = name)) + 
+  geom_histogram() + 
+  facet_grid(~name)
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_bin).
+
+![](Viz_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+density plots
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, color = name, fill = name)) + 
+  geom_density(alpha = 0.3)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density).
+
+![](Viz_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_boxplot()
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_boxplot).
+
+![](Viz_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(fill = "yellow")
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+![](Viz_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+ridge plots\!\!\!
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, y = name)) + 
+  ggridges::geom_density_ridges()
+```
+
+    ## Picking joint bandwidth of 1.84
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density_ridges).
+
+![](Viz_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->

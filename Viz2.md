@@ -517,7 +517,7 @@ ggp_density =
  
 ggp_box =
   weather_df %>% 
-  ggplot(aes(x = tmin, y = tmax)) + 
+  ggplot(aes(x = tmin, y = tmax, color =name)) + 
   geom_boxplot()
 
 (ggp_scatter + ggp_density )/ggp_box
@@ -527,8 +527,92 @@ ggp_box =
 
     ## Warning: Removed 15 rows containing non-finite values (stat_density).
 
-    ## Warning: Continuous x aesthetic -- did you forget aes(group=...)?
-
     ## Warning: Removed 15 rows containing missing values (stat_boxplot).
 
 ![](Viz2_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+
+## data manipulation
+
+``` r
+weather_df %>% 
+  mutate(
+    name = factor(name),
+    name = fct_relevel(name,"Waikiki_HA", "CentralPark_NY")
+  ) %>% 
+  ggplot(aes(x = tmin, y = tmax, color =name)) + 
+  geom_boxplot()
+```
+
+    ## Warning: Removed 15 rows containing missing values (stat_boxplot).
+
+![](Viz2_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+
+reorder instead of relevel
+
+``` r
+weather_df %>% 
+  mutate(
+    name = factor(name),
+    name = fct_reorder(name,tmax)
+  ) %>% 
+  ggplot(aes(x = tmin, y = tmax, color =name)) + 
+  geom_boxplot()
+```
+
+    ## Warning: Removed 15 rows containing missing values (stat_boxplot).
+
+![](Viz2_files/figure-gfm/unnamed-chunk-30-1.png)<!-- --> reorder is to
+order something based on one variable.
+
+``` r
+weather_df %>% 
+  mutate(
+    name = factor(name),
+    name = fct_relevel(name,"Waterhole_WA","Waikiki_HA", "CentralPark_NY")
+  ) %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_boxplot()
+```
+
+    ## Warning: Removed 15 rows containing missing values (stat_boxplot).
+
+![](Viz2_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+
+## restructure then plot
+
+``` r
+weather_df %>% 
+  pivot_longer(
+    tmax:tmin,
+    names_to = "observation",
+    values_to = "temperature"
+  ) %>% 
+  ggplot(aes(x = temperature, fill = observation)) +
+  geom_density() +
+  facet_grid(~name)
+```
+
+    ## Warning: Removed 18 rows containing non-finite values (stat_density).
+
+![](Viz2_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
+
+litter and pups
+
+\#\#\#\#\#\`\``{r} pup_data = read_csv("./data/FAS_pups.csv", col_types
+= "ciiiii") %>% janitor::clean_names() %>% mutate(sex = recode(sex,`1`=
+"male",`2\` = “female”))
+
+litter\_data = read\_csv(“./data/FAS\_litters.csv”, col\_types =
+“ccddiiii”) %\>% janitor::clean\_names() %\>% select(-pups\_survive)
+%\>% separate(group, into = c(“dose”, “day\_of\_tx”), sep = 3) %\>%
+mutate(wt\_gain = gd18\_weight - gd0\_ weight, day\_of\_tx =
+as.numeric(day\_of\_tx))
+
+fas\_data = left\_join(pup\_data, litter\_data, by = “litter\_number”)
+
+fas\_data %\>% select(sex, dose, day\_of\_tx, pd\_ears:pd\_walk) %\>%
+pivot\_longer( pd\_ears:pd\_walk, names\_to = “outcome”, values\_to =
+“pn\_day”) %\>% drop\_na() %\>% mutate(outcome =
+forcats::fct\_reorder(outcome, day\_of\_tx, median)) %\>% ggplot(aes(x =
+dose, y = pn\_day)) + geom\_violin() + facet\_grid(day\_of\_tx ~
+outcome) \`\`\`\#\#\#
